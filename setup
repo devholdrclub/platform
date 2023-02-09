@@ -24,13 +24,17 @@ current_version="v0.1.0"
 clt_name=""
 expected_clt_version=""
 recommended_clt_version=""
-has_acceptable_clt_versions=0
+has_acceptable_clt_versions=0 # to be used on update - will check if you want to dl them
 skip_version_check=0
 should_install_clt_versions=0
 
 ########################
 
 ##### FUNCTIONS #####
+
+line_break () {
+   echo -ne "\n"
+}
 
 help () {
   # Display Help
@@ -92,84 +96,79 @@ check_deps_versions () {
   expected_clt_version="1.22.10"
   recommended_clt_version="1.22.10"
   check_version
-
-  ## User has acceptable clt versions to proceed
-  has_acceptable_clt_versions=1
 }
 
 install_app_packages () {
-  current_path=$(pwd)
   echo 'installing app packages'
   for dir in "${dirs[@]}";
   do
-    echo "Opening directory $current_path"
-    (cd "../holdr-apps/$dir" && pwd)
+    echo "Opening directory ..holdr-apps/$dir"
+    (cd "../holdr-apps/$dir" && yarn)
     echo "Closing directory"
   done
 }
 
 install_clt_packages() {
   ## install node
-  echo "installing node $recommended_node_version..."
-
+  echo "🔧 Installing node $recommended_node_version."
   nvm install "$recommended_node_version"
+  # change node to new version
+  nvm use "$recommended_node_version"
+
+  line_break
 
   ## install yarn
-  echo "installing yarn $recommended_yarn_version with corepack..."
-
+  echo "🔧 Installing yarn $recommended_yarn_version with corepack."
   corepack enable
-  corepack prepare yarn@stable --activate
+  corepack prepare "yarn@$recommended_yarn_version" --activate
 }
 
 clone () {
   for repo in "${repos[@]}";
   do
     (cd ../holdr-apps && git clone "$repo")
+    line_break
   done
 }
 
 setup () {
+  echo -ne "⚙️Setting up your environment"
+  line_break
+  ## create new dir
+  (cd .. && mkdir holdr-apps)
+  ## clone all the repos
+  clone
+  line_break
+  ## install app packages for each app
   install_app_packages
-
+  line_break
+  # copy docker-compose into the directory with apps
   cp "./docker-compose.yml" "../holdr-apps/"
+  line_break
+  echo "Done ✅. You can now run docker-compose -u in the holdr-apps/."
 }
 
 run_main () {
-  ## create new dir
-  (cd .. && mkdir holdr-apps)
-
-  ## clone all the repos
-  clone
 
   ## check if the dependencies exist
   check_deps_exist
-
   ## install the recommended clt versions
   if [[ should_install_clt_versions -eq 1 ]]
   then
     install_clt_packages
+    check_deps_versions
   fi
-
   ## don't check clt versions, optimistically install packages
   if [[ $skip_version_check -eq 1 ]]
   then
+    setup
     install_app_packages
     exit 1
   fi
-
   ## check dependency version
   check_deps_versions
-
   ## install packages if I have the correct clt versions
-  if [[ $has_acceptable_clt_versions -eq 1 ]] && [[ $should_install_clt_versions -eq 0 ]]
-  then
-    setup
-    exit 1
-  elif [[ $has_acceptable_clt_versions -eq 1 ]] && [[ $should_install_clt_versions -eq 1 ]]
-  then
-    setup
-    exit 1
-  fi
+  setup
 }
 
 ###########################
@@ -202,3 +201,9 @@ done
 
 ## RUN MAIN FUNCTION
 run_main
+
+########## NOTES #############
+
+# Installing clt versions happens in
+# subshells, so you have to actually
+# update them by yourself.
