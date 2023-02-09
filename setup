@@ -44,7 +44,6 @@ help () {
 }
 
 check_deps_exist () {
-  # TODO: add nvm check
   # Check for yarn, node
   node_path=$(which node)
   yarn_path=$(which yarn)
