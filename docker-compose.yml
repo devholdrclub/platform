@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  marketplace:
+    container_name: marketplace-app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    ports:
+      - '4000:5173'
+  base:
+    container_name: base-app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    ports:
+      - '4001:5173'
+  api:
+    container_name: api
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    ports:
+      - '3000:3000'
+  db:
+    image: postgres:14.1-alpine
+    restart: unless-stopped
+    ports:
+      - '5556:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=uniquesecret
+      - POSTGRES_DB=holdr-v1
+    volumes:
+      - db:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local
+  cache:
+    driver: local
