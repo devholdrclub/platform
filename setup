@@ -1,0 +1,205 @@
+#!/bin/bash
+###
+# This program clones repositories related to the Holdr
+# platform and installs all the dependencies specified
+# in the package.json for each of the projects.
+###
+
+# Load nvm into the script
+export NVM_DIR=$HOME/.nvm;
+source "$NVM_DIR"/nvm.sh;
+
+##### CONSTANTS #####
+
+recommended_yarn_version="3.4.1"
+recommended_node_version="lts/hydrogen"
+repos=("https://github.com/devholdrclub/base-web-app.git" "https://github.com/devholdrclub/marketplace-web-app.git" "https://github.com/devholdrclub/api.git")
+dirs=("marketplace-web-app" "base-web-app" "api")
+
+######################
+
+##### VARIABLES #####
+
+current_version="v0.1.0"
+clt_name=""
+expected_clt_version=""
+recommended_clt_version=""
+has_acceptable_clt_versions=0
+skip_version_check=0
+should_install_clt_versions=0
+
+########################
+
+##### FUNCTIONS #####
+
+help () {
+  # Display Help
+  echo "Syntax: ./setup [h|p|a|V]"
+  echo "options:"
+  echo "    h     Print this Help."
+  echo "    p     Install packages only (Can fail if tool versions are not matched appropriately)"
+  echo "    a     Install app-specific clt versions and app packages only."
+  echo "    V     Print software version and exit."
+  echo
+}
+
+check_deps_exist () {
+  # TODO: add nvm check
+  # Check for yarn, node
+  node_path=$(which node)
+  yarn_path=$(which yarn)
+  nvm_exists=$(nvm -v) # hacky way to find out
+
+  if [ -z "$node_path" ]
+  then
+    echo "You need to install node, using nvm"
+    exit
+  elif [ -z "$yarn_path" ]
+  then
+    echo "You need to install yarn."
+    exit
+  elif [ -z "$nvm_exists" ]
+  then
+    echo "You need to install nvm"
+    exit
+  fi
+}
+
+check_version () {
+  current_version=$($clt_name -v)
+  if [[ $current_version < $expected_clt_version ]]
+    then
+    echo "Install newer version of $clt_name."
+    echo "Current version is not recommended. We recommend $recommended_clt_version"
+    exit
+  fi
+}
+
+check_deps_versions () {
+  ## Check node versions compatible
+  clt_name="nvm"
+  expected_clt_version="0.38.0"
+  recommended_clt_version="0.38.0"
+  check_version
+
+  ## Check node versions compatible
+  clt_name="node"
+  expected_clt_version="v18.14.0"
+  recommended_clt_version="v18 LTS"
+  check_version
+
+  ## Check node versions compatible
+  clt_name="yarn"
+  expected_clt_version="1.22.10"
+  recommended_clt_version="1.22.10"
+  check_version
+
+  ## User has acceptable clt versions to proceed
+  has_acceptable_clt_versions=1
+}
+
+install_app_packages () {
+  current_path=$(pwd)
+  echo 'installing app packages'
+  for dir in "${dirs[@]}";
+  do
+    echo "Opening directory $current_path"
+    (cd "../holdr-apps/$dir" && pwd)
+    echo "Closing directory"
+  done
+}
+
+install_clt_packages() {
+  ## install node
+  echo "installing node $recommended_node_version..."
+
+  nvm install "$recommended_node_version"
+
+  ## install yarn
+  echo "installing yarn $recommended_yarn_version with corepack..."
+
+  corepack enable
+  corepack prepare yarn@stable --activate
+}
+
+clone () {
+  for repo in "${repos[@]}";
+  do
+    (cd ../holdr-apps && git clone "$repo")
+  done
+}
+
+setup () {
+  install_app_packages
+
+  cp "./docker-compose.yml" "../holdr-apps/"
+}
+
+run_main () {
+  ## create new dir
+  (cd .. && mkdir holdr-apps)
+
+  ## clone all the repos
+  clone
+
+  ## check if the dependencies exist
+  check_deps_exist
+
+  ## install the recommended clt versions
+  if [[ should_install_clt_versions -eq 1 ]]
+  then
+    install_clt_packages
+  fi
+
+  ## don't check clt versions, optimistically install packages
+  if [[ $skip_version_check -eq 1 ]]
+  then
+    install_app_packages
+    exit 1
+  fi
+
+  ## check dependency version
+  check_deps_versions
+
+  ## install packages if I have the correct clt versions
+  if [[ $has_acceptable_clt_versions -eq 1 ]] && [[ $should_install_clt_versions -eq 0 ]]
+  then
+    setup
+    exit 1
+  elif [[ $has_acceptable_clt_versions -eq 1 ]] && [[ $should_install_clt_versions -eq 1 ]]
+  then
+    setup
+    exit 1
+  fi
+}
+
+###########################
+
+###### ARG PARSER #########
+
+while getopts hapv option; do
+  case $option in
+    h) # display Help
+       help
+       exit;;
+    a) # install all
+        should_install_clt_versions=1
+        skip_version_check=1
+        echo "installing app-specific clt and app packages";;
+    p) # install all
+        skip_version_check=1
+        echo "installing app packages only";;
+    v) # Enter a name
+        echo "$current_version"
+        exit;;
+   \?) # Invalid option
+        echo "Error: Invalid option"
+        echo "See help: ./setup -h"
+        exit;;
+  esac
+done
+
+############################
+
+## RUN MAIN FUNCTION
+run_main

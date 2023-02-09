@@ -21,7 +21,7 @@ file used to start up the platform on your local machine.
 1. Download [NVM](https://github.com/nvm-sh/nvm) 
 2. Download Node lts/hydrogen (v18.14.0) using nvm.
    - `nvm install lts/hydrogen`
-3. Download Yarn (1.22.10)
+3. Download Yarn (3.4.1)
    - `npm -gi yarn`
 4. Install [VS Code](https://code.visualstudio.com/) or [Webstorm](https://www.jetbrains.com/webstorm/)
 5. Download [Altair](https://altairgraphql.dev/), or if you prefer [Insomnia](https://insomnia.rest/)

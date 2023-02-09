@@ -1,0 +1,5 @@
+1. check if you have NR version of yarn
+2. check if you have NR version of node
+4. check if the flag cases.
+    (a) NR node version
+    (b) NR yarn version
