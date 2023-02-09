@@ -145,7 +145,7 @@ setup () {
   # copy docker-compose into the directory with apps
   cp "./docker-compose.yml" "../holdr-apps/"
   line_break
-  echo "Done ✅. You can now run docker-compose -u in the holdr-apps/."
+  echo "Done ✅."
 }
 
 run_main () {
