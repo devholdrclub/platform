@@ -27,7 +27,7 @@ file used to start up the platform on your local machine.
 5. Download [Altair](https://altairgraphql.dev/), or if you prefer [Insomnia](https://insomnia.rest/)
 6. Download [Docker](https://www.docker.com/)
 7. Download [Iterm2](https://iterm2.com/)
-8. Setup environments: run `$ ./setup`
+8. Setup environments: run `$ ./setup` (Run `$ ./setup -h` to see other setup options.)
 9. Start up apps `docker compose -u`
 
 
