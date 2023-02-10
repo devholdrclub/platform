@@ -11,7 +11,7 @@ source "$NVM_DIR"/nvm.sh;
 
 ##### CONSTANTS #####
 
-recommended_yarn_version="3.4.1"
+recommended_yarn_version="1.22.19"
 recommended_node_version="lts/hydrogen"
 repos=("https://github.com/devholdrclub/base-web-app.git" "https://github.com/devholdrclub/marketplace-web-app.git" "https://github.com/devholdrclub/api.git")
 dirs=("marketplace-web-app" "base-web-app" "api")
@@ -93,8 +93,8 @@ check_deps_versions () {
 
   ## Check node versions compatible
   clt_name="yarn"
-  expected_clt_version="1.22.10"
-  recommended_clt_version="1.22.10"
+  expected_clt_version="1.22.19"
+  recommended_clt_version="1.22.19"
   check_version
 }
 

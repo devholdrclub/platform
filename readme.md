@@ -10,7 +10,7 @@ file used to start up the platform on your local machine.
 - [ ] 5GB Free Memory 
 - [ ] Node Version Manager (v0.38.0+)
 - [ ] Node (lts/hydrogen)
-- [ ] Yarn Package Manager (1.22.10)
+- [ ] Yarn Package Manager (1.22.19)
 - [ ] Visual Studio Code / Webstorm (_Recommended. Subscription-based_)
 - [ ] Iterm (on Mac) / Cygwin (Windows) / Terminal (Linux)
 - [ ] Altair (Recommended) / Insomnia
@@ -21,9 +21,9 @@ file used to start up the platform on your local machine.
 1. Download [NVM](https://github.com/nvm-sh/nvm) 
 2. Download Node lts/hydrogen (v18.14.0) using nvm.
    - `nvm install lts/hydrogen`
-3. Download Yarn (3.4.1). See [Docs](https://yarnpkg.com/getting-started/install) for more info.
+3. Download Yarn (1.22.19). See [Docs](https://yarnpkg.com/getting-started/install) for more info.
    - Run `$ enable corepack`
-   - Run `$ corepack prepare yarn@3.4.1 --activate`
+   - Run `$ corepack prepare yarn@1.22.19 --activate`
 4. Install [VS Code](https://code.visualstudio.com/) or [Webstorm](https://www.jetbrains.com/webstorm/)
 5. Download [Altair](https://altairgraphql.dev/), or if you prefer [Insomnia](https://insomnia.rest/)
 6. Download [Docker](https://www.docker.com/)
