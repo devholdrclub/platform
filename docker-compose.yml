@@ -4,28 +4,28 @@ services:
   marketplace:
     container_name: marketplace-app
     build:
-      context: ./
+      context: ./marketplace-web-app
       dockerfile: Dockerfile
     volumes:
-      - ./:/app
+      - ./marketplace-web-app/:/app
     ports:
       - '4000:5173'
   base:
     container_name: base-app
     build:
-      context: ./
+      context: ./base-web-app
       dockerfile: Dockerfile
     volumes:
-      - ./:/app
+      - ./base-web-app/:/app
     ports:
       - '4001:5173'
   api:
     container_name: api
     build:
-      context: ./
+      context: ./api
       dockerfile: Dockerfile
     volumes:
-      - ./:/app
+      - ./api:/app
     ports:
       - '3000:3000'
   db:
