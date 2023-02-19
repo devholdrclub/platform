@@ -31,6 +31,8 @@ file used to start up the platform on your local machine.
 8. Setup environments: run `$ ./setup` (Run `$ ./setup -h` to see other setup options.)
 9. Start up apps `docker compose -u`
 
+## Todos
+-[] Add role flag (-r <role>), that allows users to pull repos pertaining to their role (frontend/backend/fullstack)
 
 ## Authors
 
